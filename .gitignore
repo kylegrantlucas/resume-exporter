@@ -1,0 +1,8 @@
+*.json
+*.tex
+*.log
+*.out
+*.pdf
+*.html
+*.aux
+*.cls
