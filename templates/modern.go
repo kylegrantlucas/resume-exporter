@@ -2,15 +2,11 @@ package templates
 
 var Modern = `
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Deedy - One Page Two Column Resume
-% LaTeX Template
-% Version 1.1 (30/4/2014)
+% Modern, based on Deedy
 %
 % Original author:
 % Debarghya Das (http://debarghyadas.com)
-%
-% Original repository:
-% https://github.com/deedydas/Deedy-Resume
+% Modified and Templated by Kyle Lucas
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[]{modern}
@@ -33,9 +29,9 @@ var Modern = `
 
 
 \namesection{[[.Basics.Name]]}{}{%
-  \urlstyle{same}\href{https://jez.io}{jez.io}
-| \href{mailto:jake@zimmerman.io}{jake@zimmerman.io}
-| 414.460.3435%
+  \urlstyle{same}\href{[[.Basics.Website]]}{[[.Basics.Website]]}
+| \href{mailto:[[.Basics.Email]]}{[[.Basics.Email]]}
+[[if ne .Basics.Name ""]]| [[.Basics.Phone]]%[[end]]
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,30 +57,19 @@ var Modern = `
 %     LINKS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Links}
-GitHub: \href{https://github.com/jez}{\custombold{jez}} \\
-Website:  \href{https://jez.io}{\custombold{jez.io}} \\
-LinkedIn:  \href{http://blog.jez.io}{\custombold{blog.jez.io}} \\
+\section{Links}[[ range $key, $value := .Basics.Profiles ]]
+[[$value.Network]]: \href{[[$value.URL]]}{\custombold{[[$value.Username]]}} \\[[end]]
 \sectionsep
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %     SKILLS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Skills}
-\subsection{Languages}
-\location{Extensive:}
-JavaScript \textbullet{} Python \textbullet{} Shell \textbullet{}  HTML/CSS \\
-SML \textbullet{} Sass \\
-\location{Comfortable:}
-C \textbullet{} C++ \textbullet{} Java \textbullet{} Haskell \textbullet{} Ruby \\
-\sectionsep
+\section{Skills}[[ range $key, $value := .Skills ]]
+\subsection{[[$value.Name]]}
+\cvskill{[[ range $itemKey, $itemValue := .Keywords ]][[if $itemKey]], [[end]][[$itemValue]][[end]]}{4}
+[[end]]
 
-\subsection{Technologies}
-\location{Extensive:}
-Node.js \textbullet{} React \textbullet{} Git \textbullet{} Unix \\
-\location{Comfortable:}
-Django \textbullet{} SQL \textbullet{} MongoDB \textbullet{} VPSs
 \sectionsep
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,49 +112,6 @@ Django \textbullet{} SQL \textbullet{} MongoDB \textbullet{} VPSs
 \sectionsep
 [[end]]
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%     Other
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%\section{Other}
-%
-%\runsubsection{Zimm's Yard Services}
-%\descript{| Owner}
-%\location{May 2008 – Aug 2013 | New Berlin, WI}
-%\begin{tightemize}
-%\item Started neighborhood lawn service business, ran for five summers
-%\item Developed \custombold{Java} app to track transactions, create invoices,
-%  etc.
-%\end{tightemize}
-%\sectionsep
-
-%\runsubsection{SDNB Tech Dept}
-%\descript{| Intern }
-%\location{Jun 2013 – Aug 2013 | New Berlin, WI}
-%\begin{tightemize}
-%\item Aided with common IT-related tasks, such as batch OS imaging \& BIOS editing
-%\item Provided technical and troubleshooting support for faculty and staff
-%\end{tightemize}
-%\sectionsep
-
-%\runsubsection{Kumon Learning Center}
-%\descript{| Math and Reading Tutor}
-%\location{Oct 2011 – Aug 2013 | Franklin, WI}
-%\begin{tightemize}
-%\item Tutored math and reading one-on-one with students aged pre-K to high school
-%\end{tightemize}
-%\sectionsep
-
-%\runsubsection{Spanish Language Interpreter}
-%\descript{| Ebenezer Food Pantry}
-%\location{2009 - 2013 | Milwaukee, WI}
-%\sectionsep
-%\runsubsection{Student Tech Speaker}
-%\descript{| Bring Your Own Device Talk Series}
-%\location{2012 - 2013| Wisconsin}
-%\sectionsep
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %     AWARDS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,34 +130,20 @@ Django \textbullet{} SQL \textbullet{} MongoDB \textbullet{} VPSs
 %  \end{tabular}
 %  \sectionsep
 %
-%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  %     SOCIETIES
-%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  \section{Societies}
-%
-%  \begin{tabular}{rll}
-%  2014 	& top 12\%ile    & Tau Beta Pi Engineering Honor Society\\
-%  2014   & National   & The Global Leadership and Education Forum (tGELF)\\
-%  2012   &  National  & Golden Key International Honor Society\\
-%  2012   &  National   & National Society of Collegiate Scholars\\
-%  \end{tabular}
-%  \sectionsep
-%
 \end{minipage}
 \end{document} \documentclass[]{article}
 `
 
 var ModernClass = `
 % Intro Options
-\ProvidesClass{deedy-resume-openfont}[2014/04/30 CV class]
+\ProvidesClass{modern}[2014/04/30 CV class]
 \NeedsTeXFormat{LaTeX2e}
 \DeclareOption{print}{\def\@cv@print{}}
 \DeclareOption*{%
   \PassOptionsToClass{\CurrentOption}{article}
 }
 \ProcessOptions\relax
-\LoadClass{article}
+\LoadClass{extarticle}
 
 % Package Imports
 \usepackage[hmargin=1.25cm, vmargin=0.7cm]{geometry}
@@ -223,10 +151,14 @@ var ModernClass = `
 \usepackage{hyperref}
 \usepackage{titlesec}
 \usepackage[absolute]{textpos}
-\usepackage[UKenglish]{babel}
-\usepackage[UKenglish]{isodate}
+\usepackage[english]{babel}
+\usepackage[english]{isodate}
 \usepackage{fontspec,xltxtra,xunicode}
 
+\defaultfontfeatures{
+  Path = /usr/share/fonts/truetype/font-awesome/ }
+
+\usepackage{fontawesome}
 % Color definitions
 \definecolor{date}{HTML}{666666}
 \definecolor{primary}{HTML}{2b2b2b}
@@ -235,9 +167,9 @@ var ModernClass = `
 
 % Set main fonts
 \defaultfontfeatures{Mapping=tex-text}
-\setmainfont[Color=primary, Path = /fonts/lato/]{Lato-Light}
+\setmainfont[Color=primary, Path = /usr/share/fonts/truetype/lato/]{Lato-Light}
 \setsansfont[Scale=MatchLowercase,Mapping=tex-text, Path = /fonts/raleway/]{Raleway-ExtraLight}
-\newcommand{\custombold}[1]{\color{subheadings}\fontspec[Path = /fonts/lato/]{Lato-Regular}\selectfont #1 \normalfont}
+\newcommand{\custombold}[1]{\color{subheadings}\fontspec[Path = /usr/share/fonts/truetype/lato/]{Lato-Regular}\selectfont #1 \normalfont}
 
 % Date command
 \setlength{\TPHorizModule}{1mm}
@@ -253,8 +185,8 @@ Last Updated on
 \newcommand{\namesection}[3]{
 	\centering{
 		\sffamily
-		\fontspec[Path = /fonts/lato/]{Lato-Light}\fontsize{40pt}{10cm}\selectfont #1
-		\fontspec[Path = /fonts/lato/]{Lato-Light}\selectfont #2
+		\fontspec[Path = /usr/share/fonts/truetype/lato/]{Lato-Light}\fontsize{40pt}{10cm}\selectfont #1
+		\fontspec[Path = /usr/share/fonts/truetype/lato/]{Lato-Light}\selectfont #2
 	} \\
 	\vspace{5pt}
 	\centering{ \color{headings}\fontspec[Path = /fonts/raleway/]{Raleway-Medium}\fontsize{11pt}{14pt}\selectfont #3}
@@ -265,15 +197,15 @@ Last Updated on
 
 % Headings command
 \titleformat{\section}{\color{headings}
-\scshape\fontspec[Path = /fonts/lato/]{Lato-Light}\fontsize{16pt}{24pt}\selectfont \raggedright\uppercase}{} {0em}{}
+\scshape\fontspec[Path = /usr/share/fonts/truetype/lato/]{Lato-Light}\fontsize{16pt}{24pt}\selectfont \raggedright\uppercase}{} {0em}{}
 
 % Subeadings command
 \titleformat{\subsection}{\color{subheadings}
-\fontspec[Path = /fonts/lato/]{Lato-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries\uppercase}{}{0em}{}
+\fontspec{Lato-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries\uppercase}{}{0em}{}
 \titlespacing{\subsection}{0pt}{\parskip}{-\parskip}
 \titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
 \newcommand{\runsubsection}[1]{\color{subheadings}
-\fontspec[Path = /fonts/lato/]{Lato-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries\uppercase {#1} \normalfont}
+\fontspec[Path = /usr/share/fonts/truetype/lato/]{Lato-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries\uppercase {#1} \normalfont}
 
 % Descriptors command
 \newcommand{\descript}[1]{\color{subheadings}\raggedright\scshape\fontspec[Path = /fonts/raleway/]{Raleway-Medium}\fontsize{11pt}{13pt}\selectfont {#1 \\} \normalfont}
@@ -286,4 +218,14 @@ Last Updated on
 
 % Bullet Lists with fewer gaps command
 \newenvironment{tightemize}{\vspace{-\topsep}\begin{itemize}\itemsep1pt \parskip0pt \parsep0pt}{\end{itemize}\vspace{-\topsep}}
+
+\colorlet{emphasis}{black}
+\colorlet{accent}{black}
+\newcommand{\ratingmarker}{\faCircle}
+
+\newcommand{\cvskill}[2]{%
+  \textcolor{emphasis}{\textbf{#1}}\hfill
+  \foreach \x in {1,...,5}{%
+    \space{\ifnumgreater{\x}{#2}{\color{body!30}}{\color{accent}}\ratingmarker}}\par%
+  }
 `

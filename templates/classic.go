@@ -113,27 +113,20 @@ var Classic = `
 
 %-----------PROJECTS-----------------
 \section{Projects}
-  \resumeSubHeadingListStart
-    \resumeSubItem{QuantSoftware Toolkit}
-      {Open source python library for financial data analysis and machine learning for finance.}
-    \resumeSubItem{Github Visualization}
-      {Data Visualization of Git Log data using D3 to analyze project trends over time.}
-    \resumeSubItem{Recommendation System}
-      {Music and Movie recommender systems using collaborative filtering on public datasets.}
-    \resumeSubItem{Mac Setup}
-      {Book that gives step by step instructions on setting up developer environment on Mac OS.}
+  \resumeSubHeadingListStart[[ range $key, $value := .Projects ]]
+    \resumeSubItem{[[$value.Name]]}
+      {[[$value.Summary]]}[[end]]
   \resumeSubHeadingListEnd
 
 %
 %--------PROGRAMMING SKILLS------------
-%\section{Programming Skills}
-%  \resumeSubHeadingListStart
-%    \item{
-%      \textbf{Languages}{: Scala, Python, Javascript, C++, SQL, Java}
-%      \hfill
-%      \textbf{Technologies}{: AWS, Play, React, Kafka, GCE}
-%    }
-%  \resumeSubHeadingListEnd
+\section{Skills}
+  \resumeSubHeadingListStart[[ range $key, $value := .Skills ]]
+    \item{
+      \textbf{[[$value.Name]]}{: [[ range $itemKey, $itemValue := .Keywords ]][[if $itemKey]], [[end]][[$itemValue]][[end]]}
+      \hfill
+    }[[end]]
+  \resumeSubHeadingListEnd
 
 
 %-------------------------------------------

@@ -91,7 +91,6 @@ func main() {
 var templateMap = map[string]string{
 	"classic": templates.Classic,
 	"modern":  templates.Modern,
-	"clean":   templates.Clean,
 }
 
 var classMap = map[string]string{
