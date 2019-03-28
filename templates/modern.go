@@ -31,7 +31,7 @@ var Modern = `
 \namesection{[[.Basics.Name]]}{}{%
   \urlstyle{same}\href{[[.Basics.Website]]}{[[.Basics.Website]]}
 | \href{mailto:[[.Basics.Email]]}{[[.Basics.Email]]}
-[[if ne .Basics.Name ""]]| [[.Basics.Phone]]%[[end]]
+[[if ne .Basics.Phone ""]]| [[.Basics.Phone]]%[[end]]
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,10 +66,9 @@ var Modern = `
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Skills}[[ range $key, $value := .Skills ]]
-\subsection{[[$value.Name]]}
-\cvskill{[[ range $itemKey, $itemValue := .Keywords ]][[if $itemKey]], [[end]][[$itemValue]][[end]]}{4}
+\descript{[[$value.Name]]}
+[[ range $itemKey, $itemValue := .Keywords ]][[if $itemKey]] \textbullet{} [[end]][[$itemValue]][[end]]
 [[end]]
-
 \sectionsep
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,10 +77,30 @@ var Modern = `
 
 \section{Projects}[[ range $key, $value := .Projects ]]
 \location{[[$value.Name]] | [[$value.ReleaseDate]]}
-\vspace{\topsep} % Hacky fix for awkward extra vertical space
+[[if eq $key 0]]\vspace{\topsep} % Hacky fix for awkward extra vertical space[[end]]
 \begin{tightemize}
 \item [[$value.Summary]]
 \end{tightemize}[[end]]
+
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     Volunteer Work
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Volunteer Work}[[ range $key, $value := .Volunteer ]]
+\descript{[[$value.Organization]] | [[$value.Position]]}
+\location{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}[[end]]
+
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     Awards
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Awards}[[ range $key, $value := .Awards]]
+\descript{[[$value.Title]] | [[$value.Awarder]]}
+\location{[[$value.Date]]}[[end]]
 
 \sectionsep
 
@@ -112,24 +131,6 @@ var Modern = `
 \sectionsep
 [[end]]
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     AWARDS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% NOTE: These are not mine. They are remnants from the template.
-%  \section{Awards}
-%  \begin{tabular}{rll}
-%  2014	     & top 52/2500  & KPCB Engineering Fellow\\
-%  2014	     & 2\textsuperscript{nd} most points  & Google Code Jam, Qualification Round\\
-%  2014	     & 1\textsuperscript{st}/50  & Microsoft Coding Competition, Cornell\\
-%  2013	     & National  & Jump Trading Challenge Finalist\\
-%  2013     & 7\textsuperscript{th}/120 & CS 3410 Cache Race Bot Tournament  \\
-%  2012     & 2\textsuperscript{nd}/150 & CS 3110 Biannual Intra-Class Bot Tournament \\
-%  2011     & National & Indian National Mathematics Olympiad (INMO) Finalist \\
-%  2010     & National & Comp. Soc. of India's National Programming Contest\\
-%  \end{tabular}
-%  \sectionsep
-%
 \end{minipage}
 \end{document} \documentclass[]{article}
 `
@@ -154,11 +155,8 @@ var ModernClass = `
 \usepackage[english]{babel}
 \usepackage[english]{isodate}
 \usepackage{fontspec,xltxtra,xunicode}
-
-\defaultfontfeatures{
-  Path = /usr/share/fonts/truetype/font-awesome/ }
-
 \usepackage{fontawesome}
+
 % Color definitions
 \definecolor{date}{HTML}{666666}
 \definecolor{primary}{HTML}{2b2b2b}
@@ -208,7 +206,7 @@ Last Updated on
 \fontspec[Path = /usr/share/fonts/truetype/lato/]{Lato-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries\uppercase {#1} \normalfont}
 
 % Descriptors command
-\newcommand{\descript}[1]{\color{subheadings}\raggedright\scshape\fontspec[Path = /fonts/raleway/]{Raleway-Medium}\fontsize{11pt}{13pt}\selectfont {#1 \\} \normalfont}
+\newcommand{\descript}[1]{\color{subheadings}\raggedright\scshape\fontspec[Path = /fonts/raleway/]{Raleway-Medium}\fontsize{10pt}{12pt}\selectfont {#1 \\} \normalfont}
 
 % Location command
 \newcommand{\location}[1]{\color{headings}\raggedright\fontspec[Path = /fonts/raleway/]{Raleway-Medium}\fontsize{10pt}{12pt}\selectfont {#1\\} \normalfont}
@@ -218,14 +216,4 @@ Last Updated on
 
 % Bullet Lists with fewer gaps command
 \newenvironment{tightemize}{\vspace{-\topsep}\begin{itemize}\itemsep1pt \parskip0pt \parsep0pt}{\end{itemize}\vspace{-\topsep}}
-
-\colorlet{emphasis}{black}
-\colorlet{accent}{black}
-\newcommand{\ratingmarker}{\faCircle}
-
-\newcommand{\cvskill}[2]{%
-  \textcolor{emphasis}{\textbf{#1}}\hfill
-  \foreach \x in {1,...,5}{%
-    \space{\ifnumgreater{\x}{#2}{\color{body!30}}{\color{accent}}\ratingmarker}}\par%
-  }
 `

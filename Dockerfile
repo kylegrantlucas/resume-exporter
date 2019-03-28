@@ -4,13 +4,12 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
 RUN apt-get -y install fontconfig texlive-xetex texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra fonts-lato
-# RUN apt-get -y install git
+RUN apt-get -y install subversion
 
 # Install Google Fonts
-# RUN git clone https://github.com/google/fonts.git /googlefont
-# RUN mkdir -p /usr/share/fonts/truetype/google-fonts/
-# RUN mkdir -p /fonts
-# RUN mv /googlefont/ofl/* /fonts/
+RUN svn checkout https://github.com/google/fonts/trunk/ofl/raleway /googlefont/ofl/raleway
+RUN mkdir -p /fonts
+RUN mv /googlefont/ofl/raleway /fonts/
 RUN  apt-get purge -f -y make-doc \
   texlive-fonts-extra-doc \
   texlive-fonts-recommended-doc \
