@@ -2,15 +2,19 @@
 
 A tool to export [JSONResume](https://jsonresume.org/) to LaTeX - with additions!
 
+## Install
+
+`$ go get -u github.com/kylegrantlucas/resume-exporter`
+
 ## Usage
 
 ### Classic
 
-`resume-exporter -t classic -o resume.tex`
+`$ resume-exporter -t classic -o resume.tex`
 
 ### Modern
 
-`resume-exporter -t modern -o resume.tex`
+`$ resume-exporter -t modern -o resume.tex`
 
 ## Thanks
 
