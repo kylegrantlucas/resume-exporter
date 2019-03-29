@@ -88,16 +88,6 @@ var Classic = `
 \end{tabular*}
 
 
-%-----------EDUCATION-----------------
-\section{Education}
-  \resumeSubHeadingListStart[[ range $key, $value := .Education ]]
-    \resumeSubheading
-      {[[$value.Institution]]}{[[$value.Location]]}
-      {[[if ne $value.StudyType ""]][[$value.StudyType]] in [[end]][[$value.Area]][[if ne $value.GPA ""]]; GPA: [[$value.GPA]][[end]]}{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
-[[end]]
-	\resumeSubHeadingListEnd
-
-
 %-----------EXPERIENCE-----------------
 \section{Experience}
   \resumeSubHeadingListStart[[ range $key, $value := .Work ]]
@@ -111,11 +101,38 @@ var Classic = `
 [[ end ]]
   \resumeSubHeadingListEnd
 
+%-----------EDUCATION-----------------
+\section{Education}
+  \resumeSubHeadingListStart[[ range $key, $value := .Education ]]
+    \resumeSubheading
+      {[[$value.Institution]]}{[[$value.Location]]}
+      {[[if ne $value.StudyType ""]][[$value.StudyType]] in [[end]][[$value.Area]][[if ne $value.GPA ""]]; GPA: [[$value.GPA]][[end]]}{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
+[[end]]
+  \resumeSubHeadingListEnd
+
 %-----------PROJECTS-----------------
 \section{Projects}
   \resumeSubHeadingListStart[[ range $key, $value := .Projects ]]
     \resumeSubItem{[[$value.Name]]}
       {[[$value.Summary]]}[[end]]
+  \resumeSubHeadingListEnd
+
+%-----------VOLUNTEER WORK-----------------
+\section{Volunteer Work}
+  \resumeSubHeadingListStart[[ range $key, $value := .Volunteer ]]
+    \resumeSubheading
+      {[[$value.Organization]]}{}
+      {[[$value.Position]]}{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
+[[end]]
+  \resumeSubHeadingListEnd
+
+%-----------AWARDS-----------------
+\section{Awards}
+  \resumeSubHeadingListStart[[ range $key, $value := .Awards ]]
+    \resumeSubheading
+      {[[$value.Title]]}{}
+      {[[$value.Awarder]]}{[[$value.Date]]}
+[[end]]
   \resumeSubHeadingListEnd
 
 %

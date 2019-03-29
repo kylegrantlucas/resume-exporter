@@ -124,7 +124,7 @@ var Modern = `
 \runsubsection{[[$value.Company]]}
 \descript{| [[$value.Position]]}
 \location{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]] | [[$value.Location]]}
-\vspace{\topsep} % Hacky fix for awkward extra vertical space
+[[if eq $key 0]]\vspace{\topsep} % Hacky fix for awkward extra vertical space[[end]]
 \begin{tightemize}[[ range $itemKey, $itemValue := $value.Highlights ]]
 \item [[$itemValue]][[end]]
 \end{tightemize}
@@ -149,7 +149,7 @@ var ModernClass = `
 % Package Imports
 \usepackage[hmargin=1.25cm, vmargin=0.7cm]{geometry}
 \usepackage[usenames,dvipsnames]{xcolor}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{titlesec}
 \usepackage[absolute]{textpos}
 \usepackage[english]{babel}
