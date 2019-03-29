@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/kylegrantlucas/resume-exporter/models"
@@ -77,7 +78,13 @@ func main() {
 	}
 
 	if classMap[templateName] != "" {
-		out, err := os.OpenFile(templateName+".cls", os.O_RDWR|os.O_CREATE, 0666)
+		outpath, err := filepath.Abs(filepath.Dir(outfile))
+		if err != nil {
+			log.SetFlags(log.Lshortfile)
+			log.Fatal(err)
+		}
+
+		out, err := os.OpenFile(outpath+"/"+templateName+".cls", os.O_RDWR|os.O_CREATE, 0666)
 		if err != nil {
 			log.SetFlags(log.Lshortfile)
 			log.Fatal(err)
