@@ -50,8 +50,10 @@ var Modern = `
 [[ range $key, $value := .Education ]]
 \subsection{[[$value.Institution]]}
 \descript{[[$value.Area]][[if ne $value.StudyType ""]] | [[$value.StudyType]][[end]]}
-\location{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]][[if ne $value.GPA ""]] | [[$value.GPA]][[end]]}[[end]]
+\location{[[if ne $value.StartDate ""]][[$value.StartDate]] - [[end]][[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]][[if ne $value.GPA ""]] | [[$value.GPA]][[end]]}
 \sectionsep
+[[end]]
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %     LINKS
@@ -90,7 +92,7 @@ var Modern = `
 
 \section{Volunteer Work}[[ range $key, $value := .Volunteer ]]
 \descript{[[$value.Organization]] | [[$value.Position]]}
-\location{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}[[end]]
+\location{[[if ne $value.StartDate ""]][[$value.StartDate]] - [[end]][[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}[[end]]
 
 \sectionsep
 
@@ -199,7 +201,7 @@ Last Updated on
 
 % Subeadings command
 \titleformat{\subsection}{\color{subheadings}
-\fontspec{Lato-Bold}\fontsize{12pt}{12pt}\selectfont\bfseries\uppercase}{}{0em}{}
+\fontspec{Lato-Bold}\fontsize{10pt}{10pt}\selectfont\bfseries\uppercase}{}{0em}{}
 \titlespacing{\subsection}{0pt}{\parskip}{-\parskip}
 \titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
 \newcommand{\runsubsection}[1]{\color{subheadings}

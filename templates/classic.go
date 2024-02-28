@@ -106,7 +106,7 @@ var Classic = `
   \resumeSubHeadingListStart[[ range $key, $value := .Education ]]
     \resumeSubheading
       {[[$value.Institution]]}{[[$value.Location]]}
-      {[[if ne $value.StudyType ""]][[$value.StudyType]] in [[end]][[$value.Area]][[if ne $value.GPA ""]]; GPA: [[$value.GPA]][[end]]}{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
+      {[[if ne $value.StudyType ""]][[$value.StudyType]] in [[end]][[$value.Area]][[if ne $value.GPA ""]]; GPA: [[$value.GPA]][[end]]}{[[if ne $value.StartDate ""]][[$value.StartDate]] - [[end]][[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
 [[end]]
   \resumeSubHeadingListEnd
 
@@ -122,7 +122,7 @@ var Classic = `
   \resumeSubHeadingListStart[[ range $key, $value := .Volunteer ]]
     \resumeSubheading
       {[[$value.Organization]]}{}
-      {[[$value.Position]]}{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
+      {[[$value.Position]]}{[[if ne $value.StartDate ""]][[$value.StartDate]] - [[end]][[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
 [[end]]
   \resumeSubHeadingListEnd
 
