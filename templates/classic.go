@@ -1,151 +1,162 @@
 package templates
 
-var Classic = `
-%-------------------------
-% Resume in Latex
-% Author : Sourabh Bajaj (Templating by Kyle Lucas)
-% License : MIT
-%------------------------
+var Classic = `// Classic Resume Template (Typst)
+// Based on Sourabh Bajaj's LaTeX template
+// Ported to Typst by Kyle Lucas
 
-\documentclass[letterpaper,11pt]{article}
+#set document(title: "{{.Basics.Name}} - Resume")
+#set page(
+  paper: "us-letter",
+  margin: (x: 0.5in, y: 0.5in),
+)
+#set text(font: ("Avenir Next", "Helvetica Neue", "Arial"), size: 10pt)
+#set par(justify: false, leading: 0.65em)
+#show list: set list(spacing: 0.65em)
 
-\usepackage{latexsym}
-\usepackage[empty]{fullpage}
-\usepackage{titlesec}
-\usepackage{marvosym}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{verbatim}
-\usepackage{enumitem}
-\usepackage[hidelinks]{hyperref}
-\usepackage{fancyhdr}
-\usepackage[english]{babel}
-
-\pagestyle{fancy}
-\fancyhf{} %----clear all header and footer fields
-\fancyfoot{}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
-
-% Adjust margins
-\addtolength{\oddsidemargin}{-0.5in}
-\addtolength{\evensidemargin}{-0.5in}
-\addtolength{\textwidth}{1in}
-\addtolength{\topmargin}{-.5in}
-\addtolength{\textheight}{1.0in}
-
-\urlstyle{same}
-
-\raggedbottom
-\raggedright
-\setlength{\tabcolsep}{0in}
-
-% Sections formatting
-\titleformat{\section}{
-  \vspace{-4pt}\scshape\raggedright\large
-}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
-
-%-------------------------
-% Custom commands
-\newcommand{\resumeItem}[2]{
-  \item\small{
-    \textbf{#1}{: #2 \vspace{-2pt}}
-  }
+// Section title with underline
+#let section-title(title) = {
+  v(4pt)
+  text(weight: "bold", size: 1.1em, smallcaps(title))
+  v(-2pt)
+  line(length: 100%, stroke: 0.5pt + black)
+  v(-5pt)
 }
 
-\newcommand{\companyItem}[1]{
-  \item\small{
-    {#1 \vspace{-2pt}}
-  }
+// Entry with title/location on top, position/dates below
+#let resume-subheading(title, location, position, dates) = {
+  v(2pt)
+  grid(
+    columns: (1fr, auto),
+    text(weight: "bold")[#title],
+    text()[#location]
+  )
+  grid(
+    columns: (1fr, auto),
+    text(style: "italic", size: 0.9em)[#position],
+    text(style: "italic", size: 0.9em)[#dates]
+  )
+  v(2pt)
 }
 
-
-\newcommand{\resumeSubheading}[4]{
-  \vspace{-1pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
-      \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-5pt}
+// Company heading (for grouped roles)
+#let company-heading(name, location) = {
+  v(2pt)
+  grid(
+    columns: (1fr, auto),
+    text(weight: "bold")[#name],
+    text()[#location]
+  )
 }
 
-\newcommand{\resumeSubItem}[2]{\resumeItem{#1}{#2}\vspace{-4pt}}
-\renewcommand{\labelitemii}{$\circ$}
+// Role under a company
+#let role-entry(position, dates) = {
+  grid(
+    columns: (1fr, auto),
+    text(style: "italic", size: 0.9em)[#position],
+    text(style: "italic", size: 0.9em)[#dates]
+  )
+}
 
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=*]}
-\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+// Simple subitem for skills/projects
+#let resume-subitem(name, description) = {
+  [*#name*: #description]
+  v(-4pt)
+}
 
-%-------------------------------------------
-%----------- CV STARTS HERE-----------------
+// Configure default list style
+#set list(marker: [#sym.circle.small], tight: true, spacing: 2pt)
 
+// ============ DOCUMENT STARTS HERE ============
 
-\begin{document}
+// Header
+#grid(
+  columns: (1fr, auto),
+  [
+    #text(size: 1.5em, weight: "bold")[
+      #link("{{.Basics.URL}}")[{{.Basics.Name}}]
+    ]
+    #linebreak()
+    #link("{{.Basics.URL}}")[{{.Basics.URL}}]
+  ],
+  align(right)[
+    Email: #link("mailto:{{.Basics.Email}}")[{{ .Basics.Email | escape }}]
+    {{if ne .Basics.Phone ""}}\ Phone: {{.Basics.Phone}}{{end}}
+  ]
+)
 
-%----------HEADING-----------------
-\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-  \textbf{\href{[[.Basics.Website]]}{\Large [[.Basics.Name]]}} & Email : \href{mailto:[[.Basics.Email]]}{[[.Basics.Email]]}\\
-  \href{[[.Basics.Website]]}{[[.Basics.Website]]} [[if ne .Basics.Phone ""]]& Phone: [[.Basics.Phone]][[end]] \\
-\end{tabular*}
+// ============ EXPERIENCE ============
+#section-title("Experience")
 
+{{ range $companyIdx, $company := .GroupedWorkEntries }}
+#company-heading("{{$company.Name}}", "{{$company.Location}}")
+{{ range $roleIdx, $role := $company.Roles }}
+#role-entry(
+  "{{$role.Position}}",
+  "{{$role.StartDate | date}} - {{if eq $role.EndDate ""}}Present{{else}}{{$role.EndDate | date}}{{end}}"
+)
+{{ if $role.Highlights }}
+{{ range $itemKey, $itemValue := $role.Highlights }}
+- {{$itemValue}}
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
 
-%-----------EXPERIENCE-----------------
-\section{Experience}
-  \resumeSubHeadingListStart[[ range $key, $value := .Work ]]
-	  \resumeSubheading
-	    {[[$value.Company]]}[[if ne $value.Location ""]]{[[$value.Location]]}[[end]]
-	    {[[$value.Position]]}{[[$value.StartDate]] - [[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
-	    \resumeItemListStart[[ range $itemKey, $itemValue := $value.Highlights ]]
-	      \companyItem
-	        {[[$itemValue]]}[[ end ]]
-			\resumeItemListEnd
-[[ end ]]
-  \resumeSubHeadingListEnd
+// ============ EDUCATION ============
+#section-title("Education")
 
-%-----------EDUCATION-----------------
-\section{Education}
-  \resumeSubHeadingListStart[[ range $key, $value := .Education ]]
-    \resumeSubheading
-      {[[$value.Institution]]}{[[$value.Location]]}
-      {[[if ne $value.StudyType ""]][[$value.StudyType]] in [[end]][[$value.Area]][[if ne $value.GPA ""]]; GPA: [[$value.GPA]][[end]]}{[[if ne $value.StartDate ""]][[$value.StartDate]] - [[end]][[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
-[[end]]
-  \resumeSubHeadingListEnd
+{{ range $key, $value := .Education }}
+#resume-subheading(
+  "{{$value.Institution}}",
+  "{{$value.Location}}",
+  "{{if ne $value.StudyType ""}}{{$value.StudyType}} in {{end}}{{$value.Area}}{{if ne $value.Score ""}}; GPA: {{$value.Score}}{{end}}",
+  "{{if ne $value.StartDate ""}}{{$value.StartDate | date}} - {{end}}{{if eq $value.EndDate ""}}Present{{else}}{{$value.EndDate | date}}{{end}}"
+)
+{{ end }}
 
-%-----------PROJECTS-----------------
-\section{Projects}
-  \resumeSubHeadingListStart[[ range $key, $value := .Projects ]]
-    \resumeSubItem{[[$value.Name]]}
-      {[[$value.Summary]]}[[end]]
-  \resumeSubHeadingListEnd
+// ============ PROJECTS ============
+{{if .Projects}}
+#section-title("Projects")
 
-%-----------VOLUNTEER WORK-----------------
-\section{Volunteer Work}
-  \resumeSubHeadingListStart[[ range $key, $value := .Volunteer ]]
-    \resumeSubheading
-      {[[$value.Organization]]}{}
-      {[[$value.Position]]}{[[if ne $value.StartDate ""]][[$value.StartDate]] - [[end]][[if eq $value.EndDate ""]]Present[[else]][[$value.EndDate]][[end]]}
-[[end]]
-  \resumeSubHeadingListEnd
+{{ range $key, $value := .Projects }}
+#resume-subitem("{{$value.Name}}", "{{$value.Description}}")
+{{ end }}
+{{end}}
 
-%-----------AWARDS-----------------
-\section{Awards}
-  \resumeSubHeadingListStart[[ range $key, $value := .Awards ]]
-    \resumeSubheading
-      {[[$value.Title]]}{}
-      {[[$value.Awarder]]}{[[$value.Date]]}
-[[end]]
-  \resumeSubHeadingListEnd
+// ============ VOLUNTEER WORK ============
+{{if .Volunteer}}
+#section-title("Volunteer Work")
 
-%
-%--------PROGRAMMING SKILLS------------
-\section{Skills}
-  \resumeSubHeadingListStart[[ range $key, $value := .Skills ]]
-    \item{
-      \textbf{[[$value.Name]]}{: [[ range $itemKey, $itemValue := .Keywords ]][[if $itemKey]], [[end]][[$itemValue]][[end]]}
-      \hfill
-    }[[end]]
-  \resumeSubHeadingListEnd
+{{ range $key, $value := .Volunteer }}
+#resume-subheading(
+  "{{$value.Organization}}",
+  "",
+  "{{$value.Position}}",
+  "{{if ne $value.StartDate ""}}{{$value.StartDate | date}} - {{end}}{{if eq $value.EndDate ""}}Present{{else}}{{$value.EndDate | date}}{{end}}"
+)
+{{ end }}
+{{end}}
 
+// ============ AWARDS ============
+{{if .Awards}}
+#section-title("Awards")
 
-%-------------------------------------------
-\end{document}
+{{ range $key, $value := .Awards }}
+#resume-subheading(
+  "{{$value.Title}}",
+  "",
+  "{{$value.Awarder}}",
+  "{{$value.Date | date}}"
+)
+{{ end }}
+{{end}}
+
+// ============ SKILLS ============
+{{if .Skills}}
+#section-title("Skills")
+
+{{ range $key, $value := .Skills }}
+- *{{$value.Name}}*: {{ range $itemKey, $itemValue := .Keywords }}{{if $itemKey}}, {{end}}{{$itemValue}}{{ end }}
+{{ end }}
+{{end}}
 `
