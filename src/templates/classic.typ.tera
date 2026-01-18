@@ -1,10 +1,7 @@
-package templates
-
-var Classic = `// Classic Resume Template (Typst)
+// Classic Resume Template (Typst)
 // Based on Sourabh Bajaj's LaTeX template
-// Ported to Typst by Kyle Lucas
 
-#set document(title: "{{.Basics.Name}} - Resume")
+#set document(title: "{{ basics.name }} - Resume")
 #set page(
   paper: "us-letter",
   margin: (x: 0.5in, y: 0.5in),
@@ -73,90 +70,89 @@ var Classic = `// Classic Resume Template (Typst)
   columns: (1fr, auto),
   [
     #text(size: 1.5em, weight: "bold")[
-      #link("{{.Basics.URL}}")[{{.Basics.Name}}]
+      #link("{{ basics.url }}")[{{ basics.name }}]
     ]
     #linebreak()
-    #link("{{.Basics.URL}}")[{{.Basics.URL}}]
+    #link("{{ basics.url }}")[{{ basics.url }}]
   ],
   align(right)[
-    Email: #link("mailto:{{.Basics.Email}}")[{{ .Basics.Email | escape }}]
-    {{if ne .Basics.Phone ""}}\ Phone: {{.Basics.Phone}}{{end}}
+    Email: #link("mailto:{{ basics.email }}")[{{ basics.email | escape_typst }}]
+    {% if basics.phone %}\ Phone: {{ basics.phone }}{% endif %}
   ]
 )
 
 // ============ EXPERIENCE ============
 #section-title("Experience")
 
-{{ range $companyIdx, $company := .GroupedWorkEntries }}
-#company-heading("{{$company.Name}}", "{{$company.Location}}")
-{{ range $roleIdx, $role := $company.Roles }}
+{% for company in grouped_work %}
+#company-heading("{{ company.name }}", "{{ company.location }}")
+{% for role in company.roles %}
 #role-entry(
-  "{{$role.Position}}",
-  "{{$role.StartDate | date}} - {{if eq $role.EndDate ""}}Present{{else}}{{$role.EndDate | date}}{{end}}"
+  "{{ role.position }}",
+  "{{ role.start_date | date }} - {% if role.end_date == "" %}Present{% else %}{{ role.end_date | date }}{% endif %}"
 )
-{{ if $role.Highlights }}
-{{ range $itemKey, $itemValue := $role.Highlights }}
-- {{$itemValue}}
-{{ end }}
-{{ end }}
-{{ end }}
-{{ end }}
+{% if role.highlights %}
+{% for highlight in role.highlights %}
+- {{ highlight }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
 
 // ============ EDUCATION ============
 #section-title("Education")
 
-{{ range $key, $value := .Education }}
+{% for edu in education %}
 #resume-subheading(
-  "{{$value.Institution}}",
-  "{{$value.Location}}",
-  "{{if ne $value.StudyType ""}}{{$value.StudyType}} in {{end}}{{$value.Area}}{{if ne $value.Score ""}}; GPA: {{$value.Score}}{{end}}",
-  "{{if ne $value.StartDate ""}}{{$value.StartDate | date}} - {{end}}{{if eq $value.EndDate ""}}Present{{else}}{{$value.EndDate | date}}{{end}}"
+  "{{ edu.institution }}",
+  "{{ edu.location }}",
+  "{% if edu.studyType %}{{ edu.studyType }} in {% endif %}{{ edu.area }}{% if edu.score %}; GPA: {{ edu.score }}{% endif %}",
+  "{% if edu.startDate %}{{ edu.startDate | date }} - {% endif %}{% if edu.endDate == "" %}Present{% else %}{{ edu.endDate | date }}{% endif %}"
 )
-{{ end }}
+{% endfor %}
 
 // ============ PROJECTS ============
-{{if .Projects}}
+{% if projects %}
 #section-title("Projects")
 
-{{ range $key, $value := .Projects }}
-#resume-subitem("{{$value.Name}}", "{{$value.Description}}")
-{{ end }}
-{{end}}
+{% for project in projects %}
+#resume-subitem("{{ project.name }}", "{{ project.description }}")
+{% endfor %}
+{% endif %}
 
 // ============ VOLUNTEER WORK ============
-{{if .Volunteer}}
+{% if volunteer %}
 #section-title("Volunteer Work")
 
-{{ range $key, $value := .Volunteer }}
+{% for vol in volunteer %}
 #resume-subheading(
-  "{{$value.Organization}}",
+  "{{ vol.organization }}",
   "",
-  "{{$value.Position}}",
-  "{{if ne $value.StartDate ""}}{{$value.StartDate | date}} - {{end}}{{if eq $value.EndDate ""}}Present{{else}}{{$value.EndDate | date}}{{end}}"
+  "{{ vol.position }}",
+  "{% if vol.startDate %}{{ vol.startDate | date }} - {% endif %}{% if vol.endDate == "" %}Present{% else %}{{ vol.endDate | date }}{% endif %}"
 )
-{{ end }}
-{{end}}
+{% endfor %}
+{% endif %}
 
 // ============ AWARDS ============
-{{if .Awards}}
+{% if awards %}
 #section-title("Awards")
 
-{{ range $key, $value := .Awards }}
+{% for award in awards %}
 #resume-subheading(
-  "{{$value.Title}}",
+  "{{ award.title }}",
   "",
-  "{{$value.Awarder}}",
-  "{{$value.Date | date}}"
+  "{{ award.awarder }}",
+  "{{ award.date | date }}"
 )
-{{ end }}
-{{end}}
+{% endfor %}
+{% endif %}
 
 // ============ SKILLS ============
-{{if .Skills}}
+{% if skills %}
 #section-title("Skills")
 
-{{ range $key, $value := .Skills }}
-- *{{$value.Name}}*: {{ range $itemKey, $itemValue := .Keywords }}{{if $itemKey}}, {{end}}{{$itemValue}}{{ end }}
-{{ end }}
-{{end}}
-`
+{% for skill in skills %}
+- *{{ skill.name }}*: {% for kw in skill.keywords %}{% if not loop.first %}, {% endif %}{{ kw }}{% endfor %}
+{% endfor %}
+{% endif %}

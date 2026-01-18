@@ -1,25 +1,54 @@
 # resume-exporter
 
-A tool to export [JSONResume](https://jsonresume.org/) to LaTeX - with additions!
+A CLI tool to convert [JSONResume](https://jsonresume.org/) to PDF using [Typst](https://typst.app/).
+
+## Features
+
+- **Single binary** — Typst compiler embedded, no external dependencies
+- **Two templates** — Modern (two-column) and Classic (single-column)
+- **System fonts** — Uses fonts installed on your system
 
 ## Install
 
-`$ go get -u github.com/kylegrantlucas/resume-exporter`
+```bash
+# From source
+cargo install --path .
+
+# Or build manually
+cargo build --release
+./target/release/resume-exporter --help
+```
 
 ## Usage
 
-### Classic
+```bash
+# Default: modern template, output to resume.pdf
+resume-exporter resume.json
 
-`$ resume-exporter -t classic -o resume.tex`
+# Specify output file
+resume-exporter resume.json -o my-resume.pdf
 
-### Modern
+# Use classic template
+resume-exporter resume.json -t classic
 
-`$ resume-exporter -t modern -o resume.tex`
+# Full options
+resume-exporter resume.json -o output.pdf -t modern
+```
+
+## Development
+
+```bash
+# Build
+just build
+
+# Release build
+just release
+
+# Install locally
+just install
+```
 
 ## Thanks
 
-Thanks to the following for their awesome Open Source work that inspired and contributed to this project:
-
-* [JSONResume](https://jsonresume.org/)
-* [Jez + Deedy's CV Template (The Modern Template)](https://github.com/jez/resume)
-* [sb2nov's CV Template (The Classic Template)](https://github.com/sb2nov/resume)
+- [JSONResume](https://jsonresume.org/) — Standard resume schema
+- [Typst](https://typst.app/) — Modern typesetting system
