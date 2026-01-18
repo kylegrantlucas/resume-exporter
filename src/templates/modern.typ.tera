@@ -4,7 +4,7 @@
 #set document(title: "{{ basics.name }} - Resume")
 #set page(
   paper: "us-letter",
-  margin: (x: 0.35in, y: 0.3in),
+  margin: (x: 0.35in, y: 0.25in),
 )
 
 // Color definitions - softer, modern palette
@@ -15,8 +15,8 @@
 
 // Typography setup - clean sans-serif
 #set text(font: ("Avenir Next", "Helvetica Neue", "Arial"), size: 9.5pt, fill: primary)
-#set par(justify: false, leading: 0.65em)
-#show list: set list(spacing: 0.4em)
+#set par(justify: false, leading: 0.6em)
+#show list: set list(spacing: 0.3em)
 
 // Helper functions
 #let section-title(title) = {
@@ -147,7 +147,7 @@
     {% endfor %}
     {% endif %}
     {% endfor %}
-    #v(2pt)
+    #v(1pt)
     {% endfor %}
   ]
 )
