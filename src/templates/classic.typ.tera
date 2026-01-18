@@ -1,0 +1,158 @@
+// Classic Resume Template (Typst)
+// Based on Sourabh Bajaj's LaTeX template
+
+#set document(title: "{{ basics.name }} - Resume")
+#set page(
+  paper: "us-letter",
+  margin: (x: 0.5in, y: 0.5in),
+)
+#set text(font: ("Avenir Next", "Helvetica Neue", "Arial"), size: 10pt)
+#set par(justify: false, leading: 0.65em)
+#show list: set list(spacing: 0.65em)
+
+// Section title with underline
+#let section-title(title) = {
+  v(4pt)
+  text(weight: "bold", size: 1.1em, smallcaps(title))
+  v(-2pt)
+  line(length: 100%, stroke: 0.5pt + black)
+  v(-5pt)
+}
+
+// Entry with title/location on top, position/dates below
+#let resume-subheading(title, location, position, dates) = {
+  v(2pt)
+  grid(
+    columns: (1fr, auto),
+    text(weight: "bold")[#title],
+    text()[#location]
+  )
+  grid(
+    columns: (1fr, auto),
+    text(style: "italic", size: 0.9em)[#position],
+    text(style: "italic", size: 0.9em)[#dates]
+  )
+  v(2pt)
+}
+
+// Company heading (for grouped roles)
+#let company-heading(name, location) = {
+  v(2pt)
+  grid(
+    columns: (1fr, auto),
+    text(weight: "bold")[#name],
+    text()[#location]
+  )
+}
+
+// Role under a company
+#let role-entry(position, dates) = {
+  grid(
+    columns: (1fr, auto),
+    text(style: "italic", size: 0.9em)[#position],
+    text(style: "italic", size: 0.9em)[#dates]
+  )
+}
+
+// Simple subitem for skills/projects
+#let resume-subitem(name, description) = {
+  [*#name*: #description]
+  v(-4pt)
+}
+
+// Configure default list style
+#set list(marker: [#sym.circle.small], tight: true, spacing: 2pt)
+
+// ============ DOCUMENT STARTS HERE ============
+
+// Header
+#grid(
+  columns: (1fr, auto),
+  [
+    #text(size: 1.5em, weight: "bold")[
+      #link("{{ basics.url }}")[{{ basics.name }}]
+    ]
+    #linebreak()
+    #link("{{ basics.url }}")[{{ basics.url }}]
+  ],
+  align(right)[
+    Email: #link("mailto:{{ basics.email }}")[{{ basics.email | escape_typst }}]
+    {% if basics.phone %}\ Phone: {{ basics.phone }}{% endif %}
+  ]
+)
+
+// ============ EXPERIENCE ============
+#section-title("Experience")
+
+{% for company in grouped_work %}
+#company-heading("{{ company.name }}", "{{ company.location }}")
+{% for role in company.roles %}
+#role-entry(
+  "{{ role.position }}",
+  "{{ role.start_date | date }} - {% if role.end_date == "" %}Present{% else %}{{ role.end_date | date }}{% endif %}"
+)
+{% if role.highlights %}
+{% for highlight in role.highlights %}
+- {{ highlight }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+// ============ EDUCATION ============
+#section-title("Education")
+
+{% for edu in education %}
+#resume-subheading(
+  "{{ edu.institution }}",
+  "{{ edu.location }}",
+  "{% if edu.studyType %}{{ edu.studyType }} in {% endif %}{{ edu.area }}{% if edu.score %}; GPA: {{ edu.score }}{% endif %}",
+  "{% if edu.startDate %}{{ edu.startDate | date }} - {% endif %}{% if edu.endDate == "" %}Present{% else %}{{ edu.endDate | date }}{% endif %}"
+)
+{% endfor %}
+
+// ============ PROJECTS ============
+{% if projects %}
+#section-title("Projects")
+
+{% for project in projects %}
+#resume-subitem("{{ project.name }}", "{{ project.description }}")
+{% endfor %}
+{% endif %}
+
+// ============ VOLUNTEER WORK ============
+{% if volunteer %}
+#section-title("Volunteer Work")
+
+{% for vol in volunteer %}
+#resume-subheading(
+  "{{ vol.organization }}",
+  "",
+  "{{ vol.position }}",
+  "{% if vol.startDate %}{{ vol.startDate | date }} - {% endif %}{% if vol.endDate == "" %}Present{% else %}{{ vol.endDate | date }}{% endif %}"
+)
+{% endfor %}
+{% endif %}
+
+// ============ AWARDS ============
+{% if awards %}
+#section-title("Awards")
+
+{% for award in awards %}
+#resume-subheading(
+  "{{ award.title }}",
+  "",
+  "{{ award.awarder }}",
+  "{{ award.date | date }}"
+)
+{% endfor %}
+{% endif %}
+
+// ============ SKILLS ============
+{% if skills %}
+#section-title("Skills")
+
+{% for skill in skills %}
+- *{{ skill.name }}*: {% for kw in skill.keywords %}{% if not loop.first %}, {% endif %}{{ kw }}{% endfor %}
+{% endfor %}
+{% endif %}

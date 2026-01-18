@@ -1,0 +1,153 @@
+// Modern Resume Template (Typst)
+// Clean, contemporary two-column layout
+
+#set document(title: "{{ basics.name }} - Resume")
+#set page(
+  paper: "us-letter",
+  margin: (x: 0.35in, y: 0.3in),
+)
+
+// Color definitions - softer, modern palette
+#let primary = rgb("#1a1a1a")
+#let headings = rgb("#555555")
+#let subheadings = rgb("#222222")
+#let accent = rgb("#0066cc")
+
+// Typography setup - clean sans-serif
+#set text(font: ("Avenir Next", "Helvetica Neue", "Arial"), size: 9.5pt, fill: primary)
+#set par(justify: false, leading: 0.65em)
+#show list: set list(spacing: 0.4em)
+
+// Helper functions
+#let section-title(title) = {
+  text(fill: accent, size: 9pt, weight: "bold", tracking: 0.05em, upper(title))
+  v(-4pt)
+  line(length: 100%, stroke: 0.5pt + accent.lighten(60%))
+  v(1pt)
+}
+
+#let subsection-title(title) = {
+  text(fill: subheadings, weight: "semibold", size: 8.5pt)[#title]
+  linebreak()
+}
+
+#let run-subsection(title) = {
+  text(fill: subheadings, weight: "bold", size: 9pt)[#title]
+}
+
+#let descript(content) = {
+  text(fill: headings, size: 7.5pt, style: "italic")[#content]
+}
+
+#let location(content) = {
+  text(fill: headings, size: 7.5pt)[#content]
+}
+
+#let section-sep = v(2pt)
+
+#let custom-bold(content) = {
+  text(fill: accent, weight: "medium")[#content]
+}
+
+// Configure default list style
+#set list(marker: [‣], tight: true, spacing: 0pt, indent: 0.4em)
+
+// ============ DOCUMENT STARTS HERE ============
+
+// Name Header (full width, centered)
+#align(center)[
+  #text(size: 26pt, font: "Avenir Next", weight: "regular", fill: primary, tracking: 0.02em)[{{ basics.name }}]
+  #v(-6pt)
+  #text(size: 8pt, fill: headings)[
+    #link("{{ basics.url }}")[{{ basics.url }}]
+    #h(4pt) | #h(4pt) #link("mailto:{{ basics.email }}")[{{ basics.email | escape_typst }}]
+    {% if basics.phone %}#h(4pt) | #h(4pt) {{ basics.phone }}{% endif %}
+  ]
+]
+#v(-2pt)
+#line(length: 100%, stroke: 0.5pt + primary.lighten(70%))
+#v(2pt)
+
+// Two-column layout
+#grid(
+  columns: (1fr, 2.2fr),
+  gutter: 16pt,
+
+  // ======== LEFT COLUMN ========
+  [
+    // Education
+    #section-title("Education")
+    {% for edu in education %}
+    *{{ edu.institution }}*
+    #linebreak()
+    #text(size: 7.5pt, fill: headings)[{{ edu.area }}{% if edu.studyType %} · {{ edu.studyType }}{% endif %} · {% if edu.endDate == "" %}Present{% else %}{{ edu.endDate | date }}{% endif %}]
+    #v(2pt)
+    {% endfor %}
+
+    // Links
+    {% if basics.profiles %}
+    #section-title("Links")
+    {% for profile in basics.profiles %}
+    #text(size: 7.5pt)[{{ profile.network }}:] #link("{{ profile.url }}")[#text(size: 7.5pt, fill: accent)[{{ profile.username }}]]
+    {% endfor %}
+    #section-sep
+    {% endif %}
+
+    // Skills - more compact
+    {% if skills %}
+    #section-title("Skills")
+    {% for skill in skills %}
+    #text(size: 8pt, weight: "bold")[{{ skill.name }}]
+    #linebreak()
+    #text(size: 7pt, fill: headings)[{% for kw in skill.keywords %}{% if not loop.first %}, {% endif %}{{ kw }}{% endfor %}]
+    #v(2pt)
+    {% endfor %}
+    {% endif %}
+
+    // Projects - compact
+    {% if projects %}
+    #section-title("Projects")
+    {% for project in projects %}
+    #text(size: 7.5pt)[*{{ project.name }}* – {{ project.description }}]
+    #v(1pt)
+    {% endfor %}
+    {% endif %}
+
+    // Other
+    {% if volunteer or awards %}
+    #section-title("Other")
+    {% if awards %}{% for award in awards %}#text(size: 7.5pt)[*{{ award.title }}* · {{ award.awarder }}]
+    {% endfor %}{% endif %}
+    {% if volunteer %}{% for vol in volunteer %}#text(size: 7.5pt)[{{ vol.organization }} · {{ vol.position }}]
+    {% endfor %}{% endif %}
+    {% endif %}
+  ],
+
+  // ======== RIGHT COLUMN ========
+  [
+    // Experience
+    #section-title("Experience")
+
+    {% for company in grouped_work %}
+    #grid(
+      columns: (1fr, auto),
+      text(fill: subheadings, weight: "bold", size: 9pt)[{{ company.name }}],
+      text(size: 7pt, fill: headings)[{{ company.location }}]
+    )
+    {% for role in company.roles %}
+    #v(-3pt)
+    #grid(
+      columns: (1fr, auto),
+      text(fill: headings, size: 8pt, weight: "medium")[{{ role.position }}],
+      text(size: 7pt, fill: headings)[{{ role.start_date | date }} – {% if role.end_date == "" %}Present{% else %}{{ role.end_date | date }}{% endif %}]
+    )
+    {% if role.highlights %}
+    {% for highlight in role.highlights %}
+    - #text(size: 8pt)[{{ highlight }}]
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+    #v(2pt)
+    {% endfor %}
+  ]
+)

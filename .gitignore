@@ -6,3 +6,7 @@
 *.html
 *.aux
 *.cls
+
+# Added by cargo
+
+/target
