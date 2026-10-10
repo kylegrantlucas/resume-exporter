@@ -10,3 +10,4 @@
 # Added by cargo
 
 /target
+.direnv/

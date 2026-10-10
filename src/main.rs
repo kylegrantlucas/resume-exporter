@@ -31,7 +31,9 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     // Default output: input stem + .pdf
-    let output = cli.output.unwrap_or_else(|| cli.input.with_extension("pdf"));
+    let output = cli
+        .output
+        .unwrap_or_else(|| cli.input.with_extension("pdf"));
 
     // Load and parse resume
     let json = std::fs::read_to_string(&cli.input)
