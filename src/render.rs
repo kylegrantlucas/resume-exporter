@@ -113,8 +113,8 @@ impl Renderer {
         })?;
 
         // Export to PDF
-        let pdf_bytes = typst_pdf::pdf(&document, &typst_pdf::PdfOptions::default())
-            .map_err(|errors| {
+        let pdf_bytes =
+            typst_pdf::pdf(&document, &typst_pdf::PdfOptions::default()).map_err(|errors| {
                 let messages: Vec<_> = errors.iter().map(|e| format!("{:?}", e)).collect();
                 anyhow::anyhow!("PDF export failed:\n{}", messages.join("\n"))
             })?;
